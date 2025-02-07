@@ -1,7 +1,10 @@
 add_rules("mode.debug", "mode.release")
 
+add_includedirs("host", "jit")
+
 target("minilua")
     set_kind("binary")
+    set_targetdir(".")
     add_files("host/minilua.c")
     add_defines("_CRT_SECURE_NO_DEPRECATE", "_CRT_STDIO_INLINE=__declspec(dllexport)__inline")
     if is_mode("debug") then
@@ -24,11 +27,13 @@ target("minilua")
 
         os.exec("minilua.exe host/genversion.lua")
         os.cd("..")
+
     end)
 
 target("buildvm")
     set_kind("binary")
     add_deps("minilua")
+    set_targetdir(".")
     add_files("host/buildvm*.c")
     add_includedirs(".", "../dynasm")
     if is_mode("debug") then
@@ -64,7 +69,8 @@ target("luajit")
         add_cxflags("/O2", "/MD")
         add_ldflags("/DEBUG", "/RELEASE", "/OPT:REF", "/OPT:ICF", "/INCREMENTAL:NO")
     end
-    add_links("lua51")
+    add_linkdirs("../build/windows/x64/" .. (is_mode("debug") and "debug" or "release"))
+    add_links("lua51_static")
 
 target("lua51")
     set_kind("shared")

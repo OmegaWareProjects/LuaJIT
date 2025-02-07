@@ -9,6 +9,7 @@
 *.dmp
 *.swp
 .tags
+*.pdb
 
 .vscode
 .xmake
